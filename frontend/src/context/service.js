@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useMutation } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import { message } from 'antd'
 
 export function useLogin({ onSuccess }) {
@@ -21,23 +21,24 @@ export function useLogin({ onSuccess }) {
   )
 }
 
-export function useAuthRefresh({ onSuccess, onQueryError }) {
-  return {
-    mutate: () => {},
-  }
-  // return useMutation(
-  //   async (variables) => {
-  //     const response = await client.request(USER_AUTH_REFRESH, variables)
-  //     return response.login
-  //   },
-  //   {
-  //     initialData: null,
-  //     refetchOnWindowFocus: false,
-  //     onSuccess,
-  //     onError: (err) => {
-  //       message.error('The access has been expired.', 5)
-  //       onQueryError(err)
-  //     },
-  //   },
-  // )
+export function useGetUser({ onSuccess, onQueryError }) {
+  return useMutation(
+    async (variables) => {
+      const { data } = await axios.get('http://localhost:8000/auth/user/', {
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${variables.token}`,
+        },
+      })
+      return data
+    },
+    {
+      refetchOnWindowFocus: false,
+      onSuccess,
+      onError: (err) => {
+        message.error('The access has been expired.', 5)
+        onQueryError(err)
+      },
+    },
+  )
 }

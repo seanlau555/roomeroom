@@ -7,7 +7,7 @@ from django.utils import timezone
 
 
 class BookingSerializer(ModelSerializer):
-    user = UserLoadSerializer()
+    user = UserLoadSerializer(read_only=True)
 
     class Meta:
         model = Booking
@@ -31,7 +31,4 @@ class RoomListSerializer(ModelSerializer):
         if len(bookings) == 0:
             return False
         else:
-
             return True
-
-        # return BookingSerializer

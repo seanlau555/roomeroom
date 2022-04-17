@@ -19,4 +19,4 @@ class Booking(models.Model):
     time_slot = models.CharField(
         max_length=255,
     )
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)

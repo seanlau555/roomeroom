@@ -1,29 +1,37 @@
 import React from 'react'
-import { Space, Row, Col } from 'antd'
+import { Typography, Divider, Space, Row, Col } from 'antd'
 import { useAuth } from '../context/auth'
-import { useRoomList } from '../services'
+import { useRoomList, useBookingList } from '../services'
 import Loading from '../components/Loading'
 import RoomCard from '../components/RoomCard'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
+import BookingCard from '../components/BookingCard'
+
+const { Title } = Typography
 
 function RoomList() {
   const history = useHistory()
 
   const { token } = useAuth()
   const { data, isFetching } = useRoomList(token)
+  const {
+    data: bookingList,
+    isFetching: isLoadingList,
+    refetch,
+  } = useBookingList(token)
 
   const onClickRoom = (id) => {
     history.push(`/room/${id}`)
   }
 
-  if (isFetching) return <Loading />
+  if (isFetching || isLoadingList) return <Loading />
   return (
     <Wrapper>
       <Flex>
-        Room list
+        <Title level={2}>Room list</Title>
         <Space direction="horizontal">
-          <Status>Using</Status>
+          <Status>Busy</Status>
           <AvailableStatus>Available</AvailableStatus>
         </Space>
       </Flex>
@@ -41,6 +49,11 @@ function RoomList() {
           </Col>
         ))}
       </Row>
+      <Divider />
+      <Title level={2}>Your booking history</Title>
+      {bookingList.map((x) => (
+        <BookingCard key={x.id} {...x} refetch={refetch} />
+      ))}
     </Wrapper>
   )
 }
@@ -49,6 +62,7 @@ export default RoomList
 
 const Wrapper = styled.div`
   width: 100%;
+  padding: 16px;
 `
 const AvailableStatus = styled.div`
   margin-right: 16px;
@@ -66,7 +80,6 @@ const AvailableStatus = styled.div`
   }
 `
 const Flex = styled.div`
-  margin: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;

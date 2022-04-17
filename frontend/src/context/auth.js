@@ -1,83 +1,66 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import { Route, useHistory } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import { useLogin, useAuthRefresh } from './service'
+import { useLogin, useGetUser } from './service'
 
-// const cookieIdName = 'userId'
-// const cookieIdUsername = 'username'
 const cookieIdToken = 'jwt_token'
-const cookieRefreshToken = 'refresh_token'
+// const cookieRefreshToken = 'refresh_token'
 
 // api here is an axios instance
 
 const AuthContext = createContext({})
 
 const initialUser = {
-  contact: null,
-  id: '',
+  pk: '',
   name: '',
-  username: '',
-  token: '',
+  email: '',
+  first_name: '',
+  last_name: '',
 }
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [token, setToken] = useState('')
   const [initializing, setInitializing] = useState(true)
 
-  const setToken = (name, token) => {
+  const setTokenValue = (name, token) => {
     Cookies.set(name, token)
   }
 
   const { mutate: userLogin, isLoading } = useLogin({
     onSuccess: (login) => {
-      const { access_token, refresh_token, user } = login
-      console.log(access_token)
-      setToken(cookieIdToken, access_token)
-      setToken(cookieRefreshToken, refresh_token)
+      const { access_token, user } = login
+      setTokenValue(cookieIdToken, access_token)
+      setToken(access_token)
       setUser(user)
     },
   })
 
-  // const {
-  //   mutate: queryUser,
-  //   isLoading: authLoading,
-  //   data: authUser,
-  //   isSuccess: called,
-  // } = useAuthRefresh({
-  //   onSuccess: ({ access_token, refresh_token }) => {
-  //     setToken(cookieIdToken, access_token)
-  //     setToken(cookieRefreshToken, refresh_token)
-  //   },
-  //   onQueryError: () => {
-  //     logout()
-  //   },
-  // })
+  const { mutate: queryUser } = useGetUser({
+    onSuccess: (user) => {
+      setUser(user)
+      const accessToken = Cookies.get(cookieIdToken)
+      setToken(accessToken)
+      setInitializing(false)
+    },
+    onQueryError: () => {
+      logout()
+    },
+  })
 
   useEffect(() => {
-    setInitializing(false)
-    // async function loadUserFromStorage() {
-    //   const token = Cookies.get(cookieIdToken)
-    //   if (token) {
-    //     queryUser({
-    //       token,
-    //     })
-    //   } else {
-    //     setInitializing(false)
-    //   }
-    // }
-    // loadUserFromStorage()
+    async function loadUserFromStorage() {
+      const token = Cookies.get(cookieIdToken)
+      if (token) {
+        queryUser({
+          token,
+        })
+      } else {
+        setInitializing(false)
+      }
+    }
+    loadUserFromStorage()
   }, [])
-
-  // useEffect(() => {
-  //   if (called && !authLoading) {
-  //     if (authUser) {
-  //       setUser(authUser)
-  //       setInitializing(false)
-  //     } else {
-  //       setInitializing(false)
-  //     }
-  //   }
-  // }, [authUser, called, authLoading])
 
   const login = async ({ username, password }) => {
     userLogin({ username, password })
@@ -89,10 +72,12 @@ export const AuthProvider = ({ children }) => {
   }
 
   const isAuthenticated = !!user
+  console.log(111, user, initializing, 1)
 
   return (
     <AuthContext.Provider
       value={{
+        token,
         isAuthenticated,
         initializing,
         loading: isLoading,
@@ -115,7 +100,6 @@ export function useAuth() {
 // route HOC
 export function PrivateRoute({ component: Component, ...rest }) {
   const { isAuthenticated, initializing } = useAuth()
-  console.log(3, isAuthenticated, initializing)
   const history = useHistory()
   const location = {
     pathname: '/login',
@@ -126,5 +110,6 @@ export function PrivateRoute({ component: Component, ...rest }) {
     if (!isAuthenticated && !initializing) history.push(location)
   }, [initializing, isAuthenticated])
 
+  console.log(isAuthenticated, initializing, rest)
   return <Route {...rest} render={(props) => <Component {...props} />} />
 }
