@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom'
 
 function Login() {
   const { isAuthenticated, login, loading, initializing } = useAuth()
-  console.log(111, isAuthenticated)
 
   const navigate = useNavigate()
   useEffect(() => {

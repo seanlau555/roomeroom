@@ -10,8 +10,8 @@ function RoomCard({ roomName, onClick, status }) {
         <HomeOutlined />
         Room: {roomName}
       </Space>
-      {status === 'available' && <Available />}
-      {status === 'busy' && <Busy />}
+      {status === 'Available' && <Available />}
+      {status === 'Busy' && <Busy />}
     </StyledCardWrapper>
   )
 }

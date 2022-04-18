@@ -20,3 +20,6 @@ class Booking(models.Model):
         max_length=255,
     )
     active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["scheduled_at", "time_slot"]

@@ -1,18 +1,18 @@
 import React from 'react'
-import { Typography, Divider, Space, Row, Col } from 'antd'
-import { useAuth } from '../context/auth'
+import { Typography, Button, Divider, Space, Row, Col } from 'antd'
 import { useRoomList, useBookingList } from '../services'
 import Loading from '../components/Loading'
 import RoomCard from '../components/RoomCard'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import BookingCard from '../components/BookingCard'
+import { useAuth } from '../context/auth'
 
 const { Title } = Typography
 
 function RoomList() {
   const navigate = useNavigate()
-  // const history = useHistory()
+  const { logout } = useAuth()
 
   const { token } = useAuth()
   const { data, isFetching } = useRoomList(token)
@@ -25,10 +25,14 @@ function RoomList() {
   const onClickRoom = (id) => {
     navigate(`/room/${id}`)
   }
+  const onClickLogout = () => {
+    logout()
+  }
 
   if (isFetching || isLoadingList) return <Loading />
   return (
     <Wrapper>
+      <Button onClick={onClickLogout}>Logout</Button>
       <Flex>
         <Title level={2}>Room list</Title>
         <Space direction="horizontal">
@@ -40,7 +44,7 @@ function RoomList() {
         {data.map((x) => (
           <Col key={x.id} span={6}>
             <RoomCard
-              status={'available'}
+              status={x.status}
               roomName={x.room_name}
               onClick={(evt) => {
                 evt.preventDefault()

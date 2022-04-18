@@ -71,8 +71,7 @@ function RoomDetail() {
       <Title level={2}>Room {data.room_name}</Title>
       <Title level={3}>
         <Space>
-          Status: {data.status ? <Available /> : <Busy />}
-          {data.status ? 'Available' : 'Busy'}
+          Status: {data.status === 'Available' ? <Available /> : <Busy />}
           {data.status}
         </Space>
       </Title>

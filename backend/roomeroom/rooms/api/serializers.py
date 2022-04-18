@@ -23,12 +23,12 @@ class RoomListSerializer(ModelSerializer):
         fields = ("id", "room_name", "status", "bookings")
 
     def get_status(self, obj):
-        today = date.today()
-        now = timezone.now()
-        currentHour = now.hour
-        print(today, now, currentHour, timezone.localdate())
+        today = timezone.localdate()
+        local = timezone.localtime()
+        currentHour = local.strftime("%H:00")
+        print(today, local, currentHour)
         bookings = obj.booking_set.filter(scheduled_at=today, time_slot=currentHour)
-        if len(bookings) == 0:
-            return False
+        if bookings.exists():
+            return "Busy"
         else:
-            return True
+            return "Available"
