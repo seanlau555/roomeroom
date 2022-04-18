@@ -5,7 +5,7 @@ import { useRoomDetail, useBookingSubmit } from '../services'
 import Loading from '../components/Loading'
 import BookingCard from '../components/BookingCard'
 import styled from 'styled-components'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 
 const { Title } = Typography
@@ -14,7 +14,7 @@ const timeSlots = [9, 10, 11, 12, 13, 14, 15, 16, 17]
 function RoomDetail() {
   const [startValue, setStartValue] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
 
   let { id } = useParams()
   const { token } = useAuth()
@@ -60,7 +60,7 @@ function RoomDetail() {
     })
   }
   const onClickBack = () => {
-    history.push('/')
+    navigate('/')
   }
 
   return (

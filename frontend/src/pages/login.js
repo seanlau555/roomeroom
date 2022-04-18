@@ -3,15 +3,16 @@ import styled from 'styled-components'
 import { Card, Form, Input, Button } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useAuth } from '../context/auth'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function Login() {
   const { isAuthenticated, login, loading, initializing } = useAuth()
+  console.log(111, isAuthenticated)
 
-  const history = useHistory()
+  const navigate = useNavigate()
   useEffect(() => {
     if (isAuthenticated) {
-      history.push('/')
+      navigate('/')
     }
   }, [isAuthenticated])
 

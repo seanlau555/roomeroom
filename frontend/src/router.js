@@ -1,16 +1,32 @@
 import React from 'react'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import { PrivateRoute } from './context/auth'
-import HomePage from './pages'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ProtectedRoute } from './context/auth'
+import RoomList from './pages/RoomList'
+import RoomDetail from './pages/RoomDetail'
 import LoginPage from './pages/login'
 
 const Router = () => {
   return (
     <BrowserRouter>
-      <Switch>
-        <Route path="/login" component={LoginPage} />
-        <PrivateRoute path="/" component={HomePage} />
-      </Switch>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/room/:id"
+          element={
+            <ProtectedRoute>
+              <RoomDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <RoomList />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </BrowserRouter>
   )
 }

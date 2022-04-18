@@ -5,13 +5,14 @@ import { useRoomList, useBookingList } from '../services'
 import Loading from '../components/Loading'
 import RoomCard from '../components/RoomCard'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import BookingCard from '../components/BookingCard'
 
 const { Title } = Typography
 
 function RoomList() {
-  const history = useHistory()
+  const navigate = useNavigate()
+  // const history = useHistory()
 
   const { token } = useAuth()
   const { data, isFetching } = useRoomList(token)
@@ -22,7 +23,7 @@ function RoomList() {
   } = useBookingList(token)
 
   const onClickRoom = (id) => {
-    history.push(`/room/${id}`)
+    navigate(`/room/${id}`)
   }
 
   if (isFetching || isLoadingList) return <Loading />

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
-import { Route, useHistory } from 'react-router-dom'
+import { Route, useNavigate, Navigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { useLogin, useGetUser } from './service'
 
@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }) => {
   }
 
   const isAuthenticated = !!user
-  console.log(111, user, initializing, 1)
 
   return (
     <AuthContext.Provider
@@ -97,19 +96,10 @@ export function useAuth() {
   return context
 }
 
-// route HOC
-export function PrivateRoute({ component: Component, ...rest }) {
+export const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, initializing } = useAuth()
-  const history = useHistory()
-  const location = {
-    pathname: '/login',
-    state: { from: 'home' },
+  if (!isAuthenticated && !initializing) {
+    return <Navigate to="/login" replace />
   }
-
-  useEffect(() => {
-    if (!isAuthenticated && !initializing) history.push(location)
-  }, [initializing, isAuthenticated])
-
-  console.log(isAuthenticated, initializing, rest)
-  return <Route {...rest} render={(props) => <Component {...props} />} />
+  return children
 }
