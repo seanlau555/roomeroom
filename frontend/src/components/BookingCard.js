@@ -6,7 +6,15 @@ import { useBookingRemove } from '../services'
 
 const { confirm } = Modal
 
-function RoomCard({ id, scheduled_at, time_slot, user, refetch }) {
+function RoomCard({
+  id,
+  room_name,
+  scheduled_at,
+  time_slot,
+  user,
+  refetch,
+  withRoomName,
+}) {
   const { user: clientUser, token } = useAuth()
   const { mutate } = useBookingRemove(token, {
     onSuccess: () => {
@@ -16,7 +24,7 @@ function RoomCard({ id, scheduled_at, time_slot, user, refetch }) {
 
   const onClickRemove = () => {
     confirm({
-      content: `Want to remove booking: ${id}`,
+      content: `Want to remove booking: Date(${scheduled_at}), timeslot(${time_slot})`,
       onOk() {
         mutate({
           id,
@@ -31,7 +39,7 @@ function RoomCard({ id, scheduled_at, time_slot, user, refetch }) {
   return (
     <StyledCardWrapper>
       <Space>
-        <div>Booking id: {id},</div>
+        {withRoomName && <div>Room: {room_name},</div>}
         <div>Date: {scheduled_at},</div>
         <div>Timeslot: {time_slot},</div>
         <div>User email: {user.email}</div>

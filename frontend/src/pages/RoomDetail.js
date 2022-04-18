@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useParams, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 
-const { Title } = Typography
+const { Title, Text } = Typography
 const timeSlots = [9, 10, 11, 12, 13, 14, 15, 16, 17]
 
 function RoomDetail() {
@@ -17,7 +17,7 @@ function RoomDetail() {
   const navigate = useNavigate()
 
   let { id } = useParams()
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const { data, isFetching, refetch } = useRoomDetail(id, token)
   const { mutate, isLoading } = useBookingSubmit(token, {
     onSuccess: () => {
@@ -65,9 +65,10 @@ function RoomDetail() {
 
   return (
     <Container>
-      <Space>
+      <Flex>
         <Button onClick={onClickBack}>{'<- Back'}</Button>
-      </Space>
+        <Text>{user.email}</Text>
+      </Flex>
       <Title level={2}>Room {data.room_name}</Title>
       <Title level={3}>
         <Space>
@@ -130,12 +131,8 @@ const Container = styled.div`
   width: 100%;
   padding: 32px;
 `
-const Slot = styled.div`
-  margin-right: 8px;
-  input {
-    margin-left: 8px;
-  }
-  label {
-    margin-left: 8px;
-  }
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `

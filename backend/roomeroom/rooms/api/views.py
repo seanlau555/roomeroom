@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from ..models import Room, Booking
 from datetime import date
-from .serializers import RoomListSerializer, BookingSerializer
+from .serializers import RoomListSerializer, BookingSerializer, BookingListSerializer
 
 
 class RoomListAPIView(ListAPIView):
@@ -35,7 +35,7 @@ class RoomDetailAPIView(RetrieveAPIView):
 
 class BookingListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = BookingSerializer
+    serializer_class = BookingListSerializer
 
     def get_queryset(self, *args, **kwargs):
         today = date.today()

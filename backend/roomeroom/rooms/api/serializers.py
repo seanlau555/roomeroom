@@ -6,6 +6,17 @@ from datetime import date, datetime
 from django.utils import timezone
 
 
+class BookingListSerializer(ModelSerializer):
+    room_name = SerializerMethodField()
+
+    class Meta:
+        model = Booking
+        fields = ("id", "room_name", "user", "scheduled_at", "time_slot", "active")
+
+    def get_room_name(self, obj):
+        return obj.room.room_name
+
+
 class BookingSerializer(ModelSerializer):
     user = UserLoadSerializer(read_only=True)
 
@@ -26,7 +37,6 @@ class RoomListSerializer(ModelSerializer):
         today = timezone.localdate()
         local = timezone.localtime()
         currentHour = local.strftime("%H:00")
-        print(today, local, currentHour)
         bookings = obj.booking_set.filter(scheduled_at=today, time_slot=currentHour)
         if bookings.exists():
             return "Busy"

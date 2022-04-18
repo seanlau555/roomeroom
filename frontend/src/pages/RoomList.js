@@ -8,13 +8,13 @@ import { useNavigate } from 'react-router-dom'
 import BookingCard from '../components/BookingCard'
 import { useAuth } from '../context/auth'
 
-const { Title } = Typography
+const { Title, Text } = Typography
 
 function RoomList() {
   const navigate = useNavigate()
   const { logout } = useAuth()
 
-  const { token } = useAuth()
+  const { user, token } = useAuth()
   const { data, isFetching } = useRoomList(token)
   const {
     data: bookingList,
@@ -32,7 +32,10 @@ function RoomList() {
   if (isFetching || isLoadingList) return <Loading />
   return (
     <Wrapper>
-      <Button onClick={onClickLogout}>Logout</Button>
+      <Flex>
+        <Button onClick={onClickLogout}>Logout</Button>
+        <Text>{user.email}</Text>
+      </Flex>
       <Flex>
         <Title level={2}>Room list</Title>
         <Space direction="horizontal">
@@ -57,7 +60,7 @@ function RoomList() {
       <Divider />
       <Title level={2}>Your booking history</Title>
       {bookingList.map((x) => (
-        <BookingCard key={x.id} {...x} refetch={refetch} />
+        <BookingCard withRoomName key={x.id} {...x} refetch={refetch} />
       ))}
     </Wrapper>
   )
